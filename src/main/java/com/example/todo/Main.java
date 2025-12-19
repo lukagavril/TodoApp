@@ -47,8 +47,8 @@ public class Main {
 
     public static void main(String[] args) {
 
-        //createDataDirFile();
-        createDataWithPath();
+        //createDataDirFile(); // og
+        createDataWithPath(); // improvement
 
 
 
