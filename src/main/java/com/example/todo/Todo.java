@@ -5,7 +5,7 @@ public class Todo {
     final int id;
     final boolean completed;
     final String title;
-    // todo add priority, due date
+    // todo add priority, due date, assigned day
 
     public Todo (boolean c, String t) {
         this.id = 2 + t.length();
@@ -17,6 +17,14 @@ public class Todo {
         this.id = id;
         completed = c;
         title = t;
+    }
+
+    public String getText() {
+        return this.title;
+    }
+
+    public boolean isCompleted() {
+        return this.completed;
     }
 
     @Override
