@@ -1,10 +1,8 @@
 package com.example.todo;
 
 public class Todo {
-    // todo make them private?
-    //final int id;
-    boolean completed;
-    final String title;
+    private boolean completed;
+    private final String title;
 
     public Todo (boolean c, String t) {
         completed = c;

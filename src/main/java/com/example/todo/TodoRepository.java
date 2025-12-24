@@ -1,6 +1,5 @@
 package com.example.todo;
 
-import javax.swing.plaf.basic.BasicInternalFrameTitlePane;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileWriter;
@@ -15,20 +14,17 @@ public class TodoRepository {
     private File file = new File(dataDirectory, "todos.txt");
 
     public List<Todo> initTodos() {
-        File file = createDataDirFile(); // og
-        //File file = createDataWithPath(); // todo doesn't work when file already exists
+        File file = createDataDirFile();
         if (file == null) {
             System.out.println("file is null");
             System.exit(3);
         }
-
         return loadOldTodosFromFile(file);
     }
 
     public void refreshFile(List<Todo> todos) {
         if (!file.delete()) {
             System.exit(7);
-            // todo throw exception or smth
         }
         file = new File(dataDirectory, "todos.txt");
 
@@ -52,20 +48,11 @@ public class TodoRepository {
 
     private File createDataDirFile() {
         if (!dataDirectory.exists()) {
-            if (dataDirectory.mkdir()) {
-                System.out.println("Directory created");
-            }
-            else {
-                System.out.println("Failed to create, even though it doesn't exist");
-            }
+            dataDirectory.mkdir();
         }
 
         try {
-            if (file.createNewFile()) {
-                System.out.println("File created");
-            } else {
-                System.out.println("File already exists");
-            }
+            file.createNewFile();
             return file;
         } catch (IOException e) {
             e.printStackTrace();
@@ -98,7 +85,28 @@ public class TodoRepository {
     }
 
 
+    private File createDataDirFileWithDebugStatements() {
+        if (!dataDirectory.exists()) {
+            if (dataDirectory.mkdir()) {
+                System.out.println("Directory created");
+            }
+            else {
+                System.out.println("Failed to create, even though it doesn't exist");
+            }
+        }
 
+        try {
+            if (file.createNewFile()) {
+                System.out.println("File created");
+            } else {
+                System.out.println("File already exists");
+            }
+            return file;
+        } catch (IOException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
 
 
     // TODO Path???

@@ -15,11 +15,14 @@ public class TodoAppFrame extends JFrame {
     private JPanel activeTodoListPanel = new JPanel();
     private JPanel completedTodoListPanel = new JPanel();
     private final JTextField todoTextField = new JTextField();
+    private final JButton deleteButton = new JButton();
 
 
     public TodoAppFrame(TodoRepository repo) {
         this.todos = repo.initTodos();
         this.repo = repo;
+        todoTextField.setForeground(new Color(128, 128, 128));
+
         JFrame frame = new JFrame();
         frame.setTitle("Todo List");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -104,8 +107,9 @@ public class TodoAppFrame extends JFrame {
         bottomPanel.setLayout(new BorderLayout());
         bottomPanel.setBorder(BorderFactory.createEmptyBorder(10, 5, 10, 5));
 
-        JButton deleteButton = new JButton("Delete all completed todos");
+        deleteButton.setText("Delete all completed todos");
         deleteButton.setPreferredSize(new Dimension(385, 30));
+        deleteButton.setEnabled(todos.stream().anyMatch(Todo::isCompleted));
         deleteButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -190,12 +194,13 @@ public class TodoAppFrame extends JFrame {
                 break;
             }
         }
-
+        deleteButton.setEnabled(true);
         refreshTodos();
     }
 
     private void onButtonDelete() {
         todos.removeIf(Todo::isCompleted);
+        deleteButton.setEnabled(false);
         refreshTodos();
     }
 }
