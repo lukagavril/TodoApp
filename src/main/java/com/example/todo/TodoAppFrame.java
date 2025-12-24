@@ -1,18 +1,22 @@
 package com.example.todo;
 
+import jdk.jfr.Frequency;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
-import java.lang.ref.Cleaner;
-import java.util.ArrayList;
 import java.util.List;
 
 public class TodoAppFrame extends JFrame {
 
     private List<Todo> todos;
+
+    private JFrame frame = new JFrame();
+
+    private JPanel todosPanel = new JPanel();
 
     private JPanel activeTodoListPanel = new JPanel();
     private JPanel completedTodoListPanel = new JPanel();
@@ -21,22 +25,21 @@ public class TodoAppFrame extends JFrame {
 
     public TodoAppFrame(List<Todo> todos) {
         this.todos = todos;
-        JFrame frame = new JFrame("Todo list");
+        frame.setTitle("Todo List");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setSize(800, 500);
 
         frame.setLayout(new BorderLayout()); // NORTH, SOUTH, EAST, WEST, CENTER
 
         // panel with 2 columns
-        JPanel todosPanel = new JPanel();
         todosPanel.setLayout(new GridLayout(1, 2));
         frame.add(todosPanel, BorderLayout.CENTER);
         // the actual columns
-        JPanel activeColumn = createTodoColumn("Active Todos", true);
-        JPanel completedColumn = createTodoColumn("Completed Todos", false);
+        activeTodoListPanel = createTodoColumn("Active Todos", true);
+        completedTodoListPanel = createTodoColumn("Completed Todos", false);
 
-        todosPanel.add(activeColumn);
-        todosPanel.add(completedColumn);
+        todosPanel.add(activeTodoListPanel);
+        todosPanel.add(completedTodoListPanel);
 
         JPanel bottomPanel = createBottomPanel();
         frame.add(bottomPanel, BorderLayout.SOUTH);
@@ -48,7 +51,18 @@ public class TodoAppFrame extends JFrame {
 
 
 
+    private void refreshTodos() {
+        todosPanel.removeAll();
 
+        activeTodoListPanel = createTodoColumn("Active Todos", true);
+        completedTodoListPanel = createTodoColumn("Completed Todos", false);
+
+        todosPanel.add(activeTodoListPanel);
+        todosPanel.add(completedTodoListPanel);
+
+        todosPanel.revalidate();
+        todosPanel.repaint();
+    }
 
     private JPanel createTodoColumn(String title, boolean activeColumn) {
         JPanel columnPanel = new JPanel();
@@ -175,7 +189,7 @@ public class TodoAppFrame extends JFrame {
         if (!todoText.isEmpty() && !todoText.equals("Enter a new todo")) {
             todoTextField.setText("");
             todos.add(new Todo(false, todoText));
-            // refresh
+            refreshTodos();
         }
     }
 }
