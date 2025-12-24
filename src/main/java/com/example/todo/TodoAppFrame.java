@@ -4,10 +4,7 @@ import jdk.jfr.Frequency;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.FocusEvent;
-import java.awt.event.FocusListener;
+import java.awt.event.*;
 import java.util.List;
 
 public class TodoAppFrame extends JFrame {
@@ -49,8 +46,6 @@ public class TodoAppFrame extends JFrame {
         frame.setVisible(true);
     }
 
-
-
     private void refreshTodos() {
         todosPanel.removeAll();
 
@@ -82,6 +77,12 @@ public class TodoAppFrame extends JFrame {
             if (activeColumn && !todo.isCompleted()) {
                 JCheckBox checkBox = new JCheckBox(todo.getText());
                 checkBox.setFont(checkBox.getFont().deriveFont(Font.PLAIN, 18f));
+                checkBox.addActionListener(new ActionListener() {
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+
+                    }
+                });
                 todoListPanel.add(checkBox);
             } else if (!activeColumn && todo.isCompleted()) {
                 JLabel todoLabel = new JLabel(todo.getText());
@@ -95,46 +96,6 @@ public class TodoAppFrame extends JFrame {
         columnPanel.add(scrollPane, BorderLayout.CENTER);
 
         return columnPanel;
-    }
-
-
-
-    private JPanel createTodoPanel() {
-        JPanel todoPanel = new JPanel();
-        todoPanel.setLayout(new GridLayout(1, 2));
-        activeTodoListPanel.setLayout(new BorderLayout());
-        completedTodoListPanel.setLayout(new BorderLayout());
-
-        // Labels at the top
-        JLabel labelActive = new JLabel("Active Todos", SwingConstants.CENTER);
-        labelActive.setFont(labelActive.getFont().deriveFont(25f));
-        activeTodoListPanel.add(labelActive, BorderLayout.NORTH);
-
-        JLabel labelCompleted = new JLabel("Completed Todos", SwingConstants.CENTER);
-        labelCompleted.setFont(labelCompleted.getFont().deriveFont(25f));
-        completedTodoListPanel.add(labelCompleted, BorderLayout.NORTH);
-
-        for (Todo todo : todos) {
-            if (!todo.isCompleted()) {
-                JCheckBox checkBox = new JCheckBox(todo.getText());
-                checkBox.setFont(checkBox.getFont().deriveFont(Font.PLAIN, 18f));
-                activeTodoListPanel.add(checkBox);
-            } else {
-                JLabel todoLabel = new JLabel(todo.getText());
-                todoLabel.setFont(todoLabel.getFont().deriveFont(Font.PLAIN, 18f));
-                completedTodoListPanel.add(todoLabel);
-            }
-        }
-
-
-//        JScrollPane scrollPaneActive = new JScrollPane(activeTodoListPanel);
-//        JScrollPane scrollPaneCompleted = new JScrollPane(completedTodoListPanel);
-        todoPanel.add(activeTodoListPanel);
-        todoPanel.add(completedTodoListPanel);
-//        todoPanel.add(scrollPaneActive, BorderLayout.CENTER);
-//        todoPanel.add(scrollPaneCompleted, BorderLayout.CENTER);
-
-        return todoPanel;
     }
 
     private JPanel createBottomPanel() {
@@ -165,11 +126,30 @@ public class TodoAppFrame extends JFrame {
                 }
             }
         });
+        todoTextField.addKeyListener(new KeyListener() {
+            @Override
+            public void keyTyped(KeyEvent e) {
+            }
+
+            @Override
+            public void keyPressed(KeyEvent e) {
+                if (e.getKeyCode() == KeyEvent.VK_ENTER && !todoTextField.getText().isEmpty()) {
+                    onAddTodo();
+                }
+            }
+
+            @Override
+            public void keyReleased(KeyEvent e) {
+            }
+        });
         JButton addButton = new JButton("Add todo");
         addButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                onAddTodo();
+                if (!todoTextField.getText().isEmpty() && !todoTextField.getText().equals("Enter a new todo")) {
+                    onAddTodo();
+                    todoTextField.setText("Enter a new todo");
+                }
             }
         });
 
@@ -186,10 +166,8 @@ public class TodoAppFrame extends JFrame {
 
     private void onAddTodo() {
         String todoText = todoTextField.getText();
-        if (!todoText.isEmpty() && !todoText.equals("Enter a new todo")) {
-            todoTextField.setText("");
-            todos.add(new Todo(false, todoText));
-            refreshTodos();
-        }
+        todoTextField.setText("");
+        todos.add(new Todo(false, todoText));
+        refreshTodos();
     }
 }
