@@ -3,7 +3,7 @@ package com.example.todo;
 public class Todo {
     // todo make them private?
     //final int id;
-    final boolean completed;
+    boolean completed;
     final String title;
 
     public Todo (boolean c, String t) {
@@ -11,11 +11,9 @@ public class Todo {
         title = t;
     }
 
-//    public Todo (int id, boolean c, String t) {
-//        this.id = id;
-//        completed = c;
-//        title = t;
-//    }
+    public void setCompleteness(boolean completed) {
+        this.completed = completed;
+    }
 
     public String getText() {
         return this.title;

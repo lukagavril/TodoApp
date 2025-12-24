@@ -80,7 +80,7 @@ public class TodoAppFrame extends JFrame {
                 checkBox.addActionListener(new ActionListener() {
                     @Override
                     public void actionPerformed(ActionEvent e) {
-
+                        checkBoxAction(e);
                     }
                 });
                 todoListPanel.add(checkBox);
@@ -96,6 +96,22 @@ public class TodoAppFrame extends JFrame {
         columnPanel.add(scrollPane, BorderLayout.CENTER);
 
         return columnPanel;
+    }
+
+    private void checkBoxAction(ActionEvent e) {
+        int startIndexOfText = e.getSource().toString().indexOf("text") + 5; // 5 = text=
+        int lastIndexOfText = e.getSource().toString().length() - 1;
+        String todoText = e.getSource().toString().substring(startIndexOfText, lastIndexOfText);
+
+        // mark as done
+        for (Todo todo : todos) {
+            if (todo.getText().equals(todoText)) {
+                todo.setCompleteness(true);
+                break;
+            }
+        }
+
+        refreshTodos();
     }
 
     private JPanel createBottomPanel() {
