@@ -106,6 +106,12 @@ public class TodoAppFrame extends JFrame {
 
         JButton deleteButton = new JButton("Delete all completed todos");
         deleteButton.setPreferredSize(new Dimension(385, 30));
+        deleteButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                onButtonDelete();
+            }
+        });
         bottomPanel.add(deleteButton, BorderLayout.EAST);
 
         JPanel addTodoPanel = new JPanel();
@@ -185,6 +191,11 @@ public class TodoAppFrame extends JFrame {
             }
         }
 
+        refreshTodos();
+    }
+
+    private void onButtonDelete() {
+        todos.removeIf(Todo::isCompleted);
         refreshTodos();
     }
 }
