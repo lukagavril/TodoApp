@@ -1,15 +1,18 @@
 package com.example.todo;
 
+import javax.swing.plaf.basic.BasicInternalFrameTitlePane;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileWriter;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
 public class TodoRepository {
+
+    private final File dataDirectory = new File("data");
+    private File file = new File(dataDirectory, "todos.txt");
 
     public List<Todo> initTodos() {
         File file = createDataDirFile(); // og
@@ -22,10 +25,32 @@ public class TodoRepository {
         return loadOldTodosFromFile(file);
     }
 
-    private File createDataDirFile() {
-        File dataDirectory = new File("data");
-        File file = new File(dataDirectory, "todos.txt");
+    public void refreshFile(List<Todo> todos) {
+        if (!file.delete()) {
+            System.exit(7);
+            // todo throw exception or smth
+        }
+        file = new File(dataDirectory, "todos.txt");
 
+        for (Todo todo : todos) {
+            String thisTodo = "";
+            if (todo.isCompleted()) {
+                thisTodo = "1";
+            }
+            else {
+                thisTodo = "0";
+            }
+            thisTodo += ";" + todo.getText() + "\n";
+            try (FileWriter writer = new FileWriter(file, true)) {
+                writer.write(thisTodo);
+            } catch (IOException e) {
+                e.printStackTrace();
+                System.exit(9);
+            }
+        }
+    }
+
+    private File createDataDirFile() {
         if (!dataDirectory.exists()) {
             if (dataDirectory.mkdir()) {
                 System.out.println("Directory created");
@@ -77,18 +102,18 @@ public class TodoRepository {
 
 
     // TODO Path???
-    private static File createDataWithPath() {
-
-        Path dir = Path.of("data");
-        Path filepath = dir.resolve("todos.txt");
-
-        try {
-            Files.createDirectories(dir);
-            File file = Files.createFile(filepath).toFile();
-            return file;
-        } catch (IOException e) {
-            e.printStackTrace();
-            return null;
-        }
-    }
+//    private static File createDataWithPath() {
+//
+//        Path dir = Path.of("data");
+//        Path filepath = dir.resolve("todos.txt");
+//
+//        try {
+//            Files.createDirectories(dir);
+//            File file = Files.createFile(filepath).toFile();
+//            return file;
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//            return null;
+//        }
+//    }
 }

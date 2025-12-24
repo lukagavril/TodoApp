@@ -1,7 +1,5 @@
 package com.example.todo;
 
-import jdk.jfr.Frequency;
-
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
@@ -9,19 +7,20 @@ import java.util.List;
 
 public class TodoAppFrame extends JFrame {
 
-    private List<Todo> todos;
+    private final List<Todo> todos;
+    private final TodoRepository repo;
 
-    private JFrame frame = new JFrame();
-
-    private JPanel todosPanel = new JPanel();
+    private final JPanel todosPanel = new JPanel();
 
     private JPanel activeTodoListPanel = new JPanel();
     private JPanel completedTodoListPanel = new JPanel();
-    private JTextField todoTextField = new JTextField();
+    private final JTextField todoTextField = new JTextField();
 
 
-    public TodoAppFrame(List<Todo> todos) {
-        this.todos = todos;
+    public TodoAppFrame(TodoRepository repo) {
+        this.todos = repo.initTodos();
+        this.repo = repo;
+        JFrame frame = new JFrame();
         frame.setTitle("Todo List");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setSize(800, 500);
@@ -57,6 +56,8 @@ public class TodoAppFrame extends JFrame {
 
         todosPanel.revalidate();
         todosPanel.repaint();
+
+        repo.refreshFile(todos);
     }
 
     private JPanel createTodoColumn(String title, boolean activeColumn) {
@@ -98,22 +99,6 @@ public class TodoAppFrame extends JFrame {
         return columnPanel;
     }
 
-    private void checkBoxAction(ActionEvent e) {
-        int startIndexOfText = e.getSource().toString().indexOf("text") + 5; // 5 = text=
-        int lastIndexOfText = e.getSource().toString().length() - 1;
-        String todoText = e.getSource().toString().substring(startIndexOfText, lastIndexOfText);
-
-        // mark as done
-        for (Todo todo : todos) {
-            if (todo.getText().equals(todoText)) {
-                todo.setCompleteness(true);
-                break;
-            }
-        }
-
-        refreshTodos();
-    }
-
     private JPanel createBottomPanel() {
         JPanel bottomPanel = new JPanel();
         bottomPanel.setLayout(new BorderLayout());
@@ -137,7 +122,7 @@ public class TodoAppFrame extends JFrame {
 
             @Override
             public void focusLost(FocusEvent e) {
-                if (todoTextField.getText().equals("")) {
+                if (todoTextField.getText().isEmpty()) {
                     todoTextField.setText("Enter a new todo");
                 }
             }
@@ -184,6 +169,22 @@ public class TodoAppFrame extends JFrame {
         String todoText = todoTextField.getText();
         todoTextField.setText("");
         todos.add(new Todo(false, todoText));
+        refreshTodos();
+    }
+
+    private void checkBoxAction(ActionEvent e) {
+        int startIndexOfText = e.getSource().toString().indexOf("text") + 5; // 5 = text=
+        int lastIndexOfText = e.getSource().toString().length() - 1;
+        String todoText = e.getSource().toString().substring(startIndexOfText, lastIndexOfText);
+
+        // mark as done
+        for (Todo todo : todos) {
+            if (todo.getText().equals(todoText) && !todo.isCompleted()) {
+                todo.setCompleteness(true);
+                break;
+            }
+        }
+
         refreshTodos();
     }
 }
