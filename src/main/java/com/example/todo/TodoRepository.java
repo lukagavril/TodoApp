@@ -10,6 +10,12 @@ import java.util.Scanner;
 
 public class TodoRepository {
 
+
+    final int WRITER_FAILED = 2;
+    final int FILE_FAILED_TO_DELETE = 3;
+    final int CREATE_FILE_FAILED = 4;
+    final int FILE_NOT_FOUND = 5;
+
     private final File dataDirectory = new File("data");
     private File file = new File(dataDirectory, "todos.txt");
 
@@ -17,14 +23,14 @@ public class TodoRepository {
         File file = createDataDirFile();
         if (file == null) {
             System.out.println("file is null");
-            System.exit(3);
+            System.exit(CREATE_FILE_FAILED);
         }
         return loadOldTodosFromFile(file);
     }
 
     public void refreshFile(List<Todo> todos) {
         if (!file.delete()) {
-            System.exit(7);
+            System.exit(FILE_FAILED_TO_DELETE);
         }
         file = new File(dataDirectory, "todos.txt");
 
@@ -41,7 +47,7 @@ public class TodoRepository {
                 writer.write(thisTodo);
             } catch (IOException e) {
                 e.printStackTrace();
-                System.exit(9);
+                System.exit(WRITER_FAILED);
             }
         }
     }
@@ -55,7 +61,6 @@ public class TodoRepository {
             file.createNewFile();
             return file;
         } catch (IOException e) {
-            e.printStackTrace();
             return null;
         }
     }
@@ -72,6 +77,7 @@ public class TodoRepository {
         } catch (FileNotFoundException e) {
             System.out.println("file not found");
             e.printStackTrace();
+            System.exit(FILE_NOT_FOUND);
         }
         return null;
     }
@@ -108,20 +114,4 @@ public class TodoRepository {
         }
     }
 
-
-    // TODO Path???
-//    private static File createDataWithPath() {
-//
-//        Path dir = Path.of("data");
-//        Path filepath = dir.resolve("todos.txt");
-//
-//        try {
-//            Files.createDirectories(dir);
-//            File file = Files.createFile(filepath).toFile();
-//            return file;
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//            return null;
-//        }
-//    }
 }

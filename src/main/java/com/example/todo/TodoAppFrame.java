@@ -127,6 +127,7 @@ public class TodoAppFrame extends JFrame {
             public void focusGained(FocusEvent e) {
                 if (todoTextField.getText().equals("Enter a new todo")) {
                     todoTextField.setText("");
+                    todoTextField.setForeground(new Color(0, 0, 0));
                 }
             }
 
